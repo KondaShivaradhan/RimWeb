@@ -6,6 +6,7 @@ import AddPostForm from "../components/Add";
 import { fetchcomplete, handleFormSubmit } from "../Misc/BackedFunc";
 import { getAuth, signOut } from "firebase/auth";
 import Search from "../components/search";
+import axios from "axios";
 const DashboardOLD: React.FC = () => {
   const navigate = useNavigate();
   const [user, loading] = useAuthState(auth);
@@ -21,8 +22,10 @@ const DashboardOLD: React.FC = () => {
 
   const fetchAll = async () => {
     try {
+      const emailObject = { email: user?.email };
+      const config = { headers: { 'Content-Type': 'application/json' } };
       let output = {
-        user: user?.email,
+        email: user?.email,
       };
       await fetchcomplete(output)
         .then((message: string) => {

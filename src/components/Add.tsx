@@ -1,13 +1,7 @@
 import React from "react";
-import { Field, Form, Formik, FormikProps, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import { MenuList } from "@mui/material";
-import {
-  ItemPredicate,
-  ItemRenderer,
-  Select,
-  MultiSelect,
-} from "@blueprintjs/select";
+
 interface FormValues {
   title: string;
   description: string;
@@ -23,7 +17,6 @@ const validationSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   tags: Yup.string().required("Tags are required"),
   description: Yup.string(),
-  media: Yup.mixed().required("Media file is required"),
 });
 
 const AddPostForm: React.FC<FormProps> = ({ user, onSubmit }) => {
@@ -36,6 +29,8 @@ const AddPostForm: React.FC<FormProps> = ({ user, onSubmit }) => {
     },
     validationSchema,
     onSubmit: (values) => {
+      console.log("came here");
+      
       onSubmit(user, values);
     },
   });

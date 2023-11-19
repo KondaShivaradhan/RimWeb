@@ -1,5 +1,7 @@
 import axios from "axios";
-const backendserver = "http://192.168.1.8:8000/rimmind/"
+import { urls } from "./Constants";
+import { log } from "console";
+const backendserver = "https://platypus-bold-sturgeon.ngrok-free.app/rimmind/"
 export const initUser = async (user: any) => {
     try {
       const response = await axios.post(
@@ -14,11 +16,9 @@ export const initUser = async (user: any) => {
 };
 
 export const sendStuff = async (stuff: any) => {
+  console.log(stuff);
     try {
-      const response = await axios.post(
-        `${backendserver}stuff/`,
-        stuff
-      );
+      const response = await axios.post(`${urls.add}`, stuff);
       return response.data.message;
     } catch (error) {
       console.error("Error sending email:", error);
@@ -27,11 +27,9 @@ export const sendStuff = async (stuff: any) => {
 };
 export const fetchcomplete = async (stuff: any) => {
     try {
-      const response = await axios.post(
-        `${backendserver}fetchAll/`,
-        stuff
-      );
-      return response.data.user_data;
+     
+      const recordsResponse = await axios.get(`${urls.fetchRecords}?email=${stuff.email}`);
+      return recordsResponse.data;
     } catch (error) {
       console.error("Error sending email:", error);
       throw error;
@@ -56,13 +54,17 @@ export const handleFormSubmit = async (user:any,values: any) => {
     formData.append("desp",values.description)
     formData.append("media",values.media)
     try {
-      await sendStuff(formData)
-        .then((message: string) => {
-          console.log(message);
-        })
-        .catch((error: any) => {
-          console.error(error);
-        });
+      const response = await axios.post(`${urls.add}`, formData);
+      console.log(response.data);
+      return response.data;
+      
+      // await sendStuff(formData)
+      //   .then((message: string) => {
+      //     console.log(message);
+      //   })
+      //   .catch((error: any) => {
+      //     console.error(error);
+      //   });
     } catch (error) {}
 
     console.log("Form submitted with values:", output);

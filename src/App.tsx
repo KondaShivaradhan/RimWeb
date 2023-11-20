@@ -10,7 +10,6 @@ import {
 } from "react-router-dom";
 import LoginPage from "./components/LoginPage";
 import Dashboard from "./User/Dashboard";
-import DashboardOLD3 from "./User/Custome";
 
 export default function Login() {
   const [user, loading] = useAuthState(auth);
@@ -34,7 +33,6 @@ export default function Login() {
             <Route path="/" element={<LoginPage />}></Route>
           )}
           <Route path="/login" element={<LoginPage />}></Route>
-          <Route path="/dash" element={<DashboardOLD3 />}></Route>
         </Routes>
       </BrowserRouter>
     </>

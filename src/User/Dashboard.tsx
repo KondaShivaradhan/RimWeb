@@ -45,6 +45,7 @@ const DashboardOLD: React.FC = () => {
         <img
           height={30}
           width={30}
+          alt=""
           src={
             user?.photoURL
               ? user?.photoURL

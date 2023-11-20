@@ -39,12 +39,23 @@ export function ChildComponent({ record }: ChildProps) {
         }
       })();
   };
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
 
   return (
     <div style={{ margin: 10, textAlign: "center" }}>
       <h3>Title: {record.title}</h3>
       <p>Description: {record.description}</p>
-
+      <p>
+        {record.description.split(urlRegex).map((part, index) => (
+          index % 2 === 0 ? (
+            part // Display regular text
+          ) : (
+            <a key={index} href={part} target="_blank" rel="noopener noreferrer">
+              {part} {/* Display link */}
+            </a>
+          )
+        ))}
+      </p>
       {record.tags.map((tag, index) => (
         <p style={{ background: "" }} key={index}>
           {tag}

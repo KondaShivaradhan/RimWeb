@@ -1,72 +1,40 @@
-.App {
+#root {
+  margin: 0 auto;
   text-align: center;
-  overflow: hidden;
-  height: 100vh;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-@import "@blueprintjs/select/lib/css/blueprint-select.css";
-@import "normalize.css";
-@import "@blueprintjs/core/lib/css/blueprint.css";
-@import "@blueprintjs/icons/lib/css/blueprint-icons.css";
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    /* animation: App-logo-spin infinite 20s linear; */
-  }
-}
-
-.App-header {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  overflow: hidden;
-  color: white;
-}
-
-#conBox {
-  padding: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-  background: rgba(51, 51, 51, 0.603);
-}
-
-/* https: //media1.giphy.com/media/YS57N6teaevJASvcMA/giphy.gif?cid=ecf05e472f5k3xsg0smotdhkrsu03utmhziquvb6l4eqwmi5&ep=v1_gifs_search&rid=giphy.gif&ct=g */
-.fullscreen-image {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('https://camo.githubusercontent.com/2c35a22f7a264813c4fe4e2f44301ad9fafa90dd00d8fca7367ac4e238abd003/68747470733a2f2f736369746563686461696c792e636f6d2f696d616765732f427261696e2d5061747465726e732d496c6c757374726174696f6e2e676966');
-  /* background-image: url('https://media1.giphy.com/media/YS57N6teaevJASvcMA/giphy.gif?cid=ecf05e472f5k3xsg0smotdhkrsu03utmhziquvb6l4eqwmi5&ep=v1_gifs_search&rid=giphy.gif&ct=g'); */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-#test {
-  /* transform: scale(1.2); */
-  position: fixed;
-  z-index: -10;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
+@keyframes logo-spin {
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
 }

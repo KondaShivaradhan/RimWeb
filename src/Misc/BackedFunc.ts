@@ -1,11 +1,10 @@
 import axios from "axios";
 import { urls } from "./Constants";
 import { log } from "console";
-const backendserver = "https://platypus-bold-sturgeon.ngrok-free.app/rimmind/"
 export const initUser = async (user: any) => {
     try {
       const response = await axios.post(
-        backendserver,
+        urls.edit,
         user
       );
       return response.data.message;
@@ -21,7 +20,7 @@ export const sendStuff = async (stuff: any) => {
       const response = await axios.post(`${urls.add}`, stuff);
       return response.data.message;
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error("Error in sendingStuff email:", error);
       throw error;
     }
 };
@@ -38,43 +37,43 @@ export const fetchcomplete = async (stuff: any) => {
 export const handleFormSubmit = async (user:any,values: any) => {
     // split the tags string to array of strings,
     const TagArray = values.tags.split(",");
+    const newArray: string[] = TagArray.map((item: string) => {
+      return item.replace(/\s/g, '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    });
     console.log(TagArray);
+    console.log(newArray);
     console.log(values.media);
     let output = {
       user: user?.email,
       title: values.title,
-      TagArray: TagArray,
+      TagArray: newArray,
       desp: values.description,
-      media: values.media
     };
-    let formData = new FormData()
-    formData.append("user",user?.email)
-    formData.append("title",values.title)
-    formData.append("TagArray",TagArray)
-    formData.append("desp",values.description)
-    formData.append("media",values.media)
+    
     try {
-      const response = await axios.post(`${urls.add}`, formData);
+     
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        };
+
+        const response = await axios.post(`${urls.add}`, output, config);
       console.log(response.data);
       return response.data;
-      
-      // await sendStuff(formData)
-      //   .then((message: string) => {
-      //     console.log(message);
-      //   })
-      //   .catch((error: any) => {
-      //     console.error(error);
-      //   });
-    } catch (error) {}
+ 
+    } catch (error) {
+      console.log(`error at function handleFromsubmit at backend function ${error}`);
+    }
 
     console.log("Form submitted with values:", output);
   };
+ 
+
   export const DeleteThis = async (values: any) => {
     try {
-      const response = await axios.post(
-        `${backendserver}delete/`,
-        values
-      );
+      const response = await axios.delete(`${urls.delRecord}/?id=${values.id as number}`)
+      
       return response.data.message;
     } catch (error) {
       console.error("Error sending email:", error);

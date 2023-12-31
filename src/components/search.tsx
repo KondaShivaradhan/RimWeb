@@ -1,23 +1,22 @@
 import React, { useState } from "react";
 import { DeleteThis } from "../Misc/BackedFunc";
-import FileComp from "./FileComp";
-
-interface Record {
-  title: string;
-  id: string;
-  description: string;
-  tags: string[];
-  media: string[];
-}
+import { Decrypt } from "../Misc/Constants";
+import { User } from "firebase/auth";
+import { UserRecord } from "../Misc/interfaces";
+import { Link, GoogleDriveLogo } from "@phosphor-icons/react";
 
 interface ChildProps {
-  record: Record;
+  record: UserRecord;
 }
 
 interface YourComponentProps {
-  records: Record[];
+  user: User
+  records: UserRecord[];
 }
 export function ChildComponent({ record }: ChildProps) {
+  console.log(record);
+  // @ts-ignore
+  const parsedFiles = record.media.map((jsonString) => JSON.parse(jsonString));
   const handleDeleteClick = (id: any) => {
     /* eslint-disable no-restricted-globals */
     confirm("Do you want to delete this Record?") &&
@@ -34,7 +33,6 @@ export function ChildComponent({ record }: ChildProps) {
               console.error(error);
             });
         } catch (error) {
-          // Handle any synchronous errors here
           console.error(error);
         }
       })();
@@ -42,64 +40,70 @@ export function ChildComponent({ record }: ChildProps) {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
 
   return (
-    <div style={{ margin: 10, textAlign: "center" }}>
-      <h3>Title: {record.title}</h3>
-      <p>Description: {record.description}</p>
-      <p>
+
+    <div className=" overflow-auto max-w-sm p-6 max-h-50 min-h-30 rounded-lg shadowf flex flex-col space-y-2 bg-gray-800 border-gray-700 ">
+      <h5 className="mb-2 text-2xl font-bold tracking-tight text-white">{record.title}</h5>
+      <p className="overflow-auto h-25 font-normal text-gray-700 dark:text-gray-400">
         {record.description.split(urlRegex).map((part, index) => (
           index % 2 === 0 ? (
-            part // Display regular text
+            part
           ) : (
-            <a key={index} href={part} target="_blank" rel="noopener noreferrer">
-              {part} {/* Display link */}
+            <a className="text-red-500" key={index} href={part} target="_blank" rel="noopener noreferrer">
+              <Link />
+              {part}
             </a>
           )
         ))}
       </p>
+      <div>
       {record.tags.map((tag, index) => (
-        <p style={{ background: "" }} key={index}>
-          {tag}
-        </p>
+        <span className="bg-blue-100 text-blue-800 text-lg font-medium me-2 px-2.5 py-1 rounded-full dark:bg-blue-900 dark:text-blue-300">{tag}</span>
       ))}
-      {record.media &&
-        record.media.map((m, index) => (
-          <>
-            <p>here is the file</p>
-            <FileComp key={index} filePath={m}></FileComp>
-          </>
+      </div>
+      <div className="flex flex-row self-center justify-center" >
+        {parsedFiles.map((t, index) => (
+          <a href={t.url}>
+
+            <button className="flex flex-row flex-nowrap items-center gap-2
+            cursor-pointer transition-all bg-gray-400 text-white px-2 py-1 rounded-lg
+border-blue-600
+border-b-[4px] hover:brightness-110 
+active:border-b-[2px] active:brightness-90 active:translate-y-[2px]">
+              <img height={20} width={20} src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg"></img>
+              {t.name.split('.').pop()}
+            </button>
+          </a>
+
         ))}
+      </div>
 
       <button
         onClick={() => {
-          handleDeleteClick(record.id);
+          handleDeleteClick(record.ruid);
         }}
       >
         delete
       </button>
       <button
         onClick={() => {
-          handleDeleteClick(record.id);
+
         }}
       >
         Edit
       </button>
     </div>
+
   );
 }
-function Search({ records }: YourComponentProps) {
+function Search({ records, user }: YourComponentProps) {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<Record[]>([]);
-
-  // Function to handle search
+  const [searchResults, setSearchResults] = useState<UserRecord[]>([]);
   const handleSearch = (query: string) => {
     setSearchQuery(query.toLowerCase());
     if (query.trim() === "") {
-      // If the query is empty, display all records
       setSearchResults(records);
     } else {
-      // Filter records based on the search query
       const filteredResults = records.filter((record) => {
-        // Check if the title, description, or tags contain the search query
         return (
           record.title.toLowerCase().includes(query) ||
           record.description.toLowerCase().includes(query) ||
@@ -111,27 +115,27 @@ function Search({ records }: YourComponentProps) {
   };
 
   return (
-    <div>
-      {/* Search bar */}
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchQuery}
-        onChange={(e) => handleSearch(e.target.value.toLowerCase())}
-      />
+    <>
+      <div>
+          <input 
+            onChange={(e) => handleSearch(e.target.value.toLowerCase())}
+            placeholder="Search..."
+            value={searchQuery}
+          type="search" id="search" className=" p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+      </div>
 
-      {/* Display search results or all records */}
-      {searchQuery.trim() === ""
-        ? records.map((record, index) => (
-            <>
-              <ChildComponent record={record} key={index} />
-              <hr />
-            </>
+      <div className="container flex my-16 flex-row flex-wrap justify-evenly gap-8">
+        {searchQuery.trim() === ""
+          ? records.map((record, index) => (
+
+            <ChildComponent record={record} key={index} />
+
           ))
-        : searchResults.map((record, index) => (
+          : searchResults.map((record, index) => (
             <ChildComponent record={record} key={index} />
           ))}
-    </div>
+      </div>
+    </>
   );
 }
 

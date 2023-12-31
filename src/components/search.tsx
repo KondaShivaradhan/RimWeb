@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { DeleteThis } from "../Misc/BackedFunc";
-import { Decrypt } from "../Misc/Constants";
+import {  extractDomain } from "../Misc/Constants";
 import { User } from "firebase/auth";
 import { UserRecord } from "../Misc/interfaces";
-import { Link, GoogleDriveLogo } from "@phosphor-icons/react";
+import {  Globe, Pencil, Trash } from "@phosphor-icons/react";
 
 interface ChildProps {
   record: UserRecord;
 }
-
+const t = "group cursor-pointer bg-cyan-800 p-2 rounded-lg outline-none text-purple-50 hover:bg-slate-200 hover:text-cyan-600 hover:scale-110 duration-300"
 interface YourComponentProps {
   user: User
   records: UserRecord[];
@@ -43,22 +43,25 @@ export function ChildComponent({ record }: ChildProps) {
 
     <div className=" overflow-auto max-w-sm p-6 max-h-50 min-h-30 rounded-lg shadowf flex flex-col space-y-2 bg-gray-800 border-gray-700 ">
       <h5 className="mb-2 text-2xl font-bold tracking-tight text-white">{record.title}</h5>
-      <p className="overflow-auto h-25 font-normal text-gray-700 dark:text-gray-400">
+      <div className="overflow-auto h-25 font-normal text-yellow-100 flex flex-row flex-wrap">
         {record.description.split(urlRegex).map((part, index) => (
           index % 2 === 0 ? (
-            part
+            <div>{part + " "}</div>
           ) : (
-            <a className="text-red-500" key={index} href={part} target="_blank" rel="noopener noreferrer">
-              <Link />
-              {part}
-            </a>
+            <div className=" flex w-fit flex-row gap-0 items-center">
+              <Globe />
+              <a className="text-red-500" key={index} href={part} target="_blank" rel="noopener noreferrer">
+                {extractDomain(part)}
+              </a>
+            </div>
+
           )
         ))}
-      </p>
+      </div>
       <div>
-      {record.tags.map((tag, index) => (
-        <span className="bg-blue-100 text-blue-800 text-lg font-medium me-2 px-2.5 py-1 rounded-full dark:bg-blue-900 dark:text-blue-300">{tag}</span>
-      ))}
+        {record.tags.map((tag, index) => (
+          <span className="bg-blue-100 text-blue-800 text-lg font-medium me-2 px-2.5 py-1 rounded-full dark:bg-blue-900 dark:text-blue-300">{tag}</span>
+        ))}
       </div>
       <div className="flex flex-row self-center justify-center" >
         {parsedFiles.map((t, index) => (
@@ -76,21 +79,27 @@ active:border-b-[2px] active:brightness-90 active:translate-y-[2px]">
 
         ))}
       </div>
+      <div className="flex flex-row flex-nowrap gap-3 justify-center">
+        <button
+          className={t}
 
-      <button
-        onClick={() => {
-          handleDeleteClick(record.ruid);
-        }}
-      >
-        delete
-      </button>
-      <button
-        onClick={() => {
+          onClick={() => {
+            handleDeleteClick(record.ruid);
+          }}
+        >
+          <Pencil />
+        </button>
+        <button
+          className={t}
 
-        }}
-      >
-        Edit
-      </button>
+          onClick={() => {
+            handleDeleteClick(record.ruid);
+          }}
+        >
+          <Trash />
+        </button>
+      </div>
+
     </div>
 
   );
@@ -116,15 +125,21 @@ function Search({ records, user }: YourComponentProps) {
 
   return (
     <>
-      <div>
-          <input 
-            onChange={(e) => handleSearch(e.target.value.toLowerCase())}
-            placeholder="Search..."
-            value={searchQuery}
-          type="search" id="search" className=" p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+      <div className="flex items-center justify-center p-5">
+        <div className="rounded-lg bg-gray-200 ">
+          <div className="flex">
+
+            <input
+              onChange={(e) => handleSearch(e.target.value.toLowerCase())}
+              placeholder="Search..."
+              value={searchQuery}
+              type="search" id="search"
+              className="relative bg-gray-50ring-0 outline-none border border-neutral-500 text-neutral-900 placeholder-violet-700 text-sm rounded-lg focus:ring-violet-500  focus:border-violet-500 block w-64 p-2.5 checked:bg-emerald-500" />
+          </div>
+        </div>
       </div>
 
-      <div className="container flex my-16 flex-row flex-wrap justify-evenly gap-8">
+      <div className="container flex my-16 flex-row flex-wrap justify-evenly gap-4">
         {searchQuery.trim() === ""
           ? records.map((record, index) => (
 

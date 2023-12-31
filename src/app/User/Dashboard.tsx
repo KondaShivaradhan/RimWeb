@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../utils/firebase";
@@ -23,20 +23,22 @@ const DashboardOLD: React.FC = () => {
     fetchAll()
   }, []);
 
-  const fetchAll = async () => {
+  const fetchAll = useCallback(async () => {
     try {
       const emailObject = { email: user?.email };
       const config = { headers: { 'Content-Type': 'application/json' } };
       const response = await axios.post(`${urls.devNode}/rim`, emailObject, config);
+
       if (response.data === "exists" && user) {
-        var temp: UserRecord[] = []
+        const temp = [];
 
         const recordsResponse = await axios.get(`${urls.fetchRecords}?email=${user.email}`);
-        // Decrpting data
+        
+        // Decrypting data
         for (const key in recordsResponse.data) {
           if (recordsResponse.data.hasOwnProperty(key)) {
             const z = recordsResponse.data[key];
-            const newArray = z.tags.map((x: any) => { return Decrypt(x, user.email as string) })
+            const newArray = z.tags.map((x:any) => Decrypt(x, user.email as string));
 
             try {
               const updated = {
@@ -46,45 +48,28 @@ const DashboardOLD: React.FC = () => {
                 media: z.media,
                 ruid: z.ruid,
                 userid: z.userid
-              }
-              temp.push(updated)
-
+              };
+              temp.push(updated);
             } catch (error) {
               console.log(error);
-
             }
-
           }
         }
-        console.log(temp.flatMap((t: any) => t.tags));
-        setrecord(temp)
+
+        console.log(temp.flatMap((t) => t.tags));
+        setrecord(temp);
       }
     } catch (error) {
-      setrecord([])
-
+      setrecord([]);
     }
-  };
+  }, [user, urls]);
   return (
     <>
       <Header />
       {/* <GoogleDriveAccess /> */}
       <div className="min-h-screen flex justify-center">
         <div className="container">
-          <button
-            onClick={() => {
-              const auth = getAuth();
-              signOut(auth)
-                .then(() => {
-                  // Sign-out successful.
-                })
-                .catch((error) => {
-                  // An error happened.
-                });
-            }}
-            type="button"
-          >
-            Signout
-          </button>
+         
           {records.length > 2 && <Search user={user as User} records={records}></Search>}
         </div>
         <div className="bg-white fixed z-50 bottom-8 right-10 p-2 rounded-full shadow-xl" >

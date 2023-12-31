@@ -1,18 +1,14 @@
 import CryptoJS from "crypto-js";
-export const urls = {
+
+  export const urls = {
     devNode: "https://node.blazingbane.com",
     add: "https://node.blazingbane.com/rim/add",
     edit: "https://node.blazingbane.com/rim/",
     fetchRecords: "https://node.blazingbane.com/rim",
-    delRecord: "https://node.blazingbane.com/rim"
+    delRecord: "https://node.blazingbane.com/rim",
+    getAPK: `https://node.blazingbane.com/rim/getapk`,
   }
-  export const urls2 = {
-    devNode: "http://192.168.1.10:3003",
-    add: "http://192.168.1.10:3003/rim/add",
-    edit: "http://192.168.1.10:3003/rim/",
-    fetchRecords: "http://192.168.1.10:3003/rim",
-    delRecord: "http://192.168.1.10:3003/rim"
-  }
+
   export const classicDarkTheme = {
     background: "#1E1E1E",
     text: "#FFFFFF",
@@ -25,7 +21,10 @@ export const urls = {
     "#778DA9",
     "#E0E1DD"
   ]
-  
+  export const extractDomain = (url: any) => {
+    return url.replace(/^https?:\/\//i, '').split('/')[0];
+
+  };
 
   export const Encrypt = (text: string, email: string): string => {
     let ciphertext = CryptoJS.AES.encrypt(text, email).toString()
